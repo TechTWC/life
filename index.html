@@ -11,47 +11,61 @@
   <body>
     <header class="topbar">
       <div>
-        <p class="eyebrow">Life Ledger</p>
-        <h1>把每天活成可回顧、可調整、可累積的系統</h1>
+        <p class="eyebrow" data-i18n="brandKicker">Life Ledger</p>
+        <h1 data-i18n="mainHeadline">把每天活成可回顧、可調整、可累積的系統</h1>
       </div>
       <div class="topbar-actions">
         <label class="date-switcher" for="currentDate">
-          <span>日期</span>
+          <span data-i18n="dateLabel">日期</span>
           <input id="currentDate" type="date" />
         </label>
-        <button id="themeToggle" class="ghost-button" type="button">切換主題</button>
+        <label class="language-switcher" for="languageSelect">
+          <span data-i18n="languageLabel">語言</span>
+          <select id="languageSelect">
+            <option value="zh">中文</option>
+            <option value="en">English</option>
+          </select>
+        </label>
+        <button id="themeToggle" class="ghost-button" type="button" data-i18n="themeToggle">切換主題</button>
       </div>
     </header>
 
-    <main class="app-shell">
+    <nav class="page-tabs" aria-label="Life Ledger sections">
+      <a href="#overview" data-i18n="tabOverview">總覽</a>
+      <a href="#timeGridSection" data-i18n="tabGrid">24 小時格子補記</a>
+      <a href="#timelineSection" data-i18n="tabTimeline">時間線</a>
+      <a href="#reviewSection" data-i18n="tabReview">每日回顧</a>
+    </nav>
+
+    <main id="overview" class="app-shell">
       <section class="hero-card card">
         <div>
-          <p class="eyebrow">今日核心問題</p>
-          <h2>今天結束時，我希望自己不後悔什麼？</h2>
+          <p class="eyebrow" data-i18n="heroEyebrow">今日核心問題</p>
+          <h2 data-i18n="heroQuestion">今天結束時，我希望自己不後悔什麼？</h2>
         </div>
-        <textarea id="dailyIntention" rows="3" placeholder="例如：完成一個最重要的產出、好好運動、晚上不要被短影音吃掉。"></textarea>
+        <textarea id="dailyIntention" rows="3" data-i18n-placeholder="dailyIntentionPlaceholder" placeholder="例如：完成一個最重要的產出、好好運動、晚上不要被短影音吃掉。"></textarea>
       </section>
 
       <section class="metrics-grid" aria-label="今日摘要">
         <article class="metric-card card">
-          <span>已記錄時間</span>
+          <span data-i18n="metricTrackedLabel">已記錄時間</span>
           <strong id="metricTracked">0h 0m</strong>
           <small id="metricCoverage">今天還有很多空白，先記下一段。</small>
         </article>
         <article class="metric-card card">
-          <span>投資人生</span>
+          <span data-i18n="metricInvestmentLabel">投資人生</span>
           <strong id="metricInvestment">0h 0m</strong>
-          <small>深度工作、學習、健康、人際等可累積時間。</small>
+          <small data-i18n="metricInvestmentHelp">深度工作、學習、健康、人際等可累積時間。</small>
         </article>
         <article class="metric-card card">
-          <span>流失時間</span>
+          <span data-i18n="metricLeakLabel">流失時間</span>
           <strong id="metricLeak">0h 0m</strong>
-          <small>不是用來自責，是用來看見可調整的缺口。</small>
+          <small data-i18n="metricLeakHelp">不是用來自責，是用來看見可調整的缺口。</small>
         </article>
         <article class="metric-card card score-card">
-          <span>今日掌舵感</span>
+          <span data-i18n="metricScoreLabel">今日掌舵感</span>
           <strong id="metricScore">0</strong>
-          <small>由記錄完整度與高價值時間比例估算。</small>
+          <small data-i18n="metricScoreHelp">由記錄完整度與高價值時間比例估算。</small>
         </article>
       </section>
 
@@ -60,7 +74,7 @@
           <div class="section-heading">
             <div>
               <p class="eyebrow">Now</p>
-              <h2>當下正在做什麼</h2>
+              <h2 data-i18n="timerTitle">當下正在做什麼</h2>
             </div>
             <span id="timerStatus" class="status-pill">未開始</span>
           </div>
@@ -68,25 +82,20 @@
           <div class="timer-display" id="timerDisplay">00:00:00</div>
           <form id="timerForm" class="stacked-form">
             <label>
-              <span>活動名稱</span>
-              <input id="timerTitle" type="text" placeholder="例如：寫產品規格、運動、滑手機" autocomplete="off" />
+              <span data-i18n="activityNameLabel">活動名稱</span>
+              <input id="timerTitleInput" type="text" data-i18n-placeholder="timerTitlePlaceholder" placeholder="例如：寫產品規格、運動、滑手機" autocomplete="off" />
             </label>
             <label>
-              <span>分類</span>
+              <span data-i18n="categoryLabel">分類</span>
               <select id="timerCategory"></select>
             </label>
             <label>
-              <span>時間價值</span>
-              <select id="timerValue">
-                <option value="investment">投資人生</option>
-                <option value="maintenance">必要維持</option>
-                <option value="recovery">恢復休息</option>
-                <option value="leak">流失時間</option>
-              </select>
+              <span data-i18n="valueLabel">時間價值</span>
+              <select id="timerValue"></select>
             </label>
             <div class="button-row">
-              <button id="startTimer" type="button">開始記錄</button>
-              <button id="stopTimer" class="secondary-button" type="button" disabled>停止並存入今天</button>
+              <button id="startTimer" type="button" data-i18n="startTimer">開始記錄</button>
+              <button id="stopTimer" class="secondary-button" type="button" disabled data-i18n="stopTimer">停止並存入今天</button>
             </div>
           </form>
         </article>
@@ -94,31 +103,60 @@
         <article class="card reminder-card">
           <div class="section-heading">
             <div>
-              <p class="eyebrow">休息提醒工作流</p>
-              <h2>專注一段、休息一段</h2>
+              <p class="eyebrow" data-i18n="paceEyebrow">休息提醒工作流</p>
+              <h2 data-i18n="paceTitle">專注一段、休息一段</h2>
             </div>
             <span id="paceStatus" class="status-pill">關閉</span>
           </div>
-          <p class="muted">這裡沿用「提醒自己不要陷進去」的精神：不是追求一直工作，而是讓節奏回到你手上。</p>
+          <p class="muted" data-i18n="paceHelp">這裡沿用「提醒自己不要陷進去」的精神：不是追求一直工作，而是讓節奏回到你手上。</p>
           <div class="settings-grid">
             <label>
-              <span>專注分鐘</span>
+              <span data-i18n="focusMinutesLabel">專注分鐘</span>
               <input id="focusMinutes" type="number" min="5" max="180" step="5" />
             </label>
             <label>
-              <span>休息分鐘</span>
+              <span data-i18n="breakMinutesLabel">休息分鐘</span>
               <input id="breakMinutes" type="number" min="1" max="60" step="1" />
             </label>
           </div>
           <div class="next-break-box">
-            <span>下一次提醒</span>
+            <span data-i18n="nextReminderLabel">下一次提醒</span>
             <strong id="nextBreakText">尚未啟動</strong>
           </div>
           <div class="button-row">
-            <button id="togglePace" type="button">啟動提醒</button>
-            <button id="notifyPermission" class="secondary-button" type="button">允許瀏覽器通知</button>
+            <button id="togglePace" type="button" data-i18n="togglePaceOn">啟動提醒</button>
+            <button id="notifyPermission" class="secondary-button" type="button" data-i18n="allowNotification">允許瀏覽器通知</button>
           </div>
         </article>
+      </section>
+
+      <section id="timeGridSection" class="card time-grid-card">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow" data-i18n="gridEyebrow">24H GRID</p>
+            <h2 data-i18n="gridTitle">24 小時 × 每 30 分鐘補記</h2>
+          </div>
+        </div>
+        <p class="muted" data-i18n="gridHelp">把一天切成 48 格，像填表格一樣補上做了什麼。按下儲存後，系統會把連續相同內容自動合併成時間紀錄。</p>
+        <div class="grid-toolbar">
+          <label>
+            <span data-i18n="gridDefaultCategory">格子預設分類</span>
+            <select id="gridCategory"></select>
+          </label>
+          <label>
+            <span data-i18n="gridDefaultValue">格子預設時間價值</span>
+            <select id="gridValue"></select>
+          </label>
+          <div class="button-row compact grid-actions">
+            <button id="fillGridFromEntries" class="secondary-button" type="button" data-i18n="fillGridFromEntries">用既有時間線填入空白</button>
+            <button id="saveTimeGrid" type="button" data-i18n="saveTimeGrid">儲存格子成紀錄</button>
+            <button id="clearTimeGrid" class="danger-button" type="button" data-i18n="clearTimeGrid">清空格子</button>
+          </div>
+        </div>
+        <div class="time-grid-hint" data-i18n="gridHint">提示：格子只會覆蓋「由格子建立」的紀錄，不會刪除你用計時器或手動表單建立的紀錄。</div>
+        <div class="time-grid-wrap">
+          <div id="timeGrid" class="time-grid" aria-label="24 hour half-hour grid"></div>
+        </div>
       </section>
 
       <section class="workbench-grid wide-left">
@@ -126,40 +164,35 @@
           <div class="section-heading">
             <div>
               <p class="eyebrow">Log</p>
-              <h2>補記一段時間</h2>
+              <h2 data-i18n="manualLogTitle">補記一段時間</h2>
             </div>
           </div>
           <form id="entryForm" class="entry-form">
             <label class="span-2">
-              <span>做了什麼</span>
-              <input id="entryTitle" type="text" placeholder="例如：讀書、開會、通勤、耍廢" required autocomplete="off" />
+              <span data-i18n="whatDidYouDoLabel">做了什麼</span>
+              <input id="entryTitle" type="text" data-i18n-placeholder="entryTitlePlaceholder" placeholder="例如：讀書、開會、通勤、耍廢" required autocomplete="off" />
             </label>
             <label>
-              <span>開始</span>
+              <span data-i18n="startLabel">開始</span>
               <input id="entryStart" type="time" required />
             </label>
             <label>
-              <span>結束</span>
+              <span data-i18n="endLabel">結束</span>
               <input id="entryEnd" type="time" required />
             </label>
             <label>
-              <span>分類</span>
+              <span data-i18n="categoryLabel">分類</span>
               <select id="entryCategory"></select>
             </label>
             <label>
-              <span>時間價值</span>
-              <select id="entryValue">
-                <option value="investment">投資人生</option>
-                <option value="maintenance">必要維持</option>
-                <option value="recovery">恢復休息</option>
-                <option value="leak">流失時間</option>
-              </select>
+              <span data-i18n="valueLabel">時間價值</span>
+              <select id="entryValue"></select>
             </label>
             <label class="span-2">
-              <span>備註</span>
-              <input id="entryNote" type="text" placeholder="選填：為什麼做、下次怎麼調整" autocomplete="off" />
+              <span data-i18n="noteLabel">備註</span>
+              <input id="entryNote" type="text" data-i18n-placeholder="entryNotePlaceholder" placeholder="選填：為什麼做、下次怎麼調整" autocomplete="off" />
             </label>
-            <button class="span-2" type="submit">新增時間紀錄</button>
+            <button class="span-2" type="submit" data-i18n="addEntry">新增時間紀錄</button>
           </form>
         </article>
 
@@ -167,51 +200,51 @@
           <div class="section-heading">
             <div>
               <p class="eyebrow">Map</p>
-              <h2>今日時間分布</h2>
+              <h2 data-i18n="mapTitle">今日時間分布</h2>
             </div>
           </div>
           <div id="categoryBars" class="category-bars empty-state">還沒有紀錄。</div>
         </article>
       </section>
 
-      <section class="card">
+      <section id="timelineSection" class="card">
         <div class="section-heading">
           <div>
             <p class="eyebrow">Timeline</p>
-            <h2>今天的時間線</h2>
+            <h2 data-i18n="timelineTitle">今天的時間線</h2>
           </div>
           <div class="button-row compact">
-            <button id="sortEntries" class="ghost-button" type="button">依時間排序</button>
-            <button id="clearDay" class="danger-button" type="button">清空今天</button>
+            <button id="sortEntries" class="ghost-button" type="button" data-i18n="sortEntries">依時間排序</button>
+            <button id="clearDay" class="danger-button" type="button" data-i18n="clearDay">清空今天</button>
           </div>
         </div>
         <div id="entryList" class="entry-list empty-state">今天尚未記錄任何活動。</div>
       </section>
 
-      <section class="workbench-grid">
+      <section id="reviewSection" class="workbench-grid">
         <article class="card review-card">
           <div class="section-heading">
             <div>
               <p class="eyebrow">Review</p>
-              <h2>每日收工回顧</h2>
+              <h2 data-i18n="reviewTitle">每日收工回顧</h2>
             </div>
           </div>
           <div class="review-grid">
             <label>
-              <span>今天完成了什麼？</span>
-              <textarea id="reviewWins" rows="4" placeholder="列出可見成果，不要只看感覺。"></textarea>
+              <span data-i18n="reviewWinsLabel">今天完成了什麼？</span>
+              <textarea id="reviewWins" rows="4" data-i18n-placeholder="reviewWinsPlaceholder" placeholder="列出可見成果，不要只看感覺。"></textarea>
             </label>
             <label>
-              <span>今天哪裡浪費了生命？</span>
-              <textarea id="reviewLeaks" rows="4" placeholder="誠實描述觸發點，不用責備自己。"></textarea>
+              <span data-i18n="reviewLeaksLabel">今天哪裡浪費了生命？</span>
+              <textarea id="reviewLeaks" rows="4" data-i18n-placeholder="reviewLeaksPlaceholder" placeholder="誠實描述觸發點，不用責備自己。"></textarea>
             </label>
             <label>
-              <span>明天要守住哪一件事？</span>
-              <textarea id="reviewTomorrow" rows="4" placeholder="一句話就好：明天最重要的防線。"></textarea>
+              <span data-i18n="reviewTomorrowLabel">明天要守住哪一件事？</span>
+              <textarea id="reviewTomorrow" rows="4" data-i18n-placeholder="reviewTomorrowPlaceholder" placeholder="一句話就好：明天最重要的防線。"></textarea>
             </label>
             <label>
-              <span>給今天的自己一句話</span>
-              <textarea id="reviewNote" rows="4" placeholder="用來建立長期的自我對話。"></textarea>
+              <span data-i18n="reviewNoteLabel">給今天的自己一句話</span>
+              <textarea id="reviewNote" rows="4" data-i18n-placeholder="reviewNotePlaceholder" placeholder="用來建立長期的自我對話。"></textarea>
             </label>
           </div>
         </article>
@@ -220,20 +253,20 @@
           <div class="section-heading">
             <div>
               <p class="eyebrow">Data</p>
-              <h2>資料掌控權</h2>
+              <h2 data-i18n="dataTitle">資料掌控權</h2>
             </div>
           </div>
-          <p class="muted">目前資料儲存在這台裝置的瀏覽器 localStorage。你可以隨時匯出、備份、搬家。</p>
+          <p class="muted" data-i18n="dataHelp">目前資料儲存在這台裝置的瀏覽器 localStorage。你可以隨時匯出、備份、搬家。</p>
           <div class="button-grid">
-            <button id="exportJson" type="button">匯出 JSON</button>
-            <button id="exportCsv" class="secondary-button" type="button">匯出 CSV</button>
+            <button id="exportJson" type="button" data-i18n="exportJson">匯出 JSON</button>
+            <button id="exportCsv" class="secondary-button" type="button" data-i18n="exportCsv">匯出 CSV</button>
             <label class="file-button">
-              匯入 JSON
+              <span data-i18n="importJson">匯入 JSON</span>
               <input id="importJson" type="file" accept="application/json" />
             </label>
           </div>
           <div class="week-box">
-            <span>最近 7 天</span>
+            <span data-i18n="last7DaysLabel">最近 7 天</span>
             <strong id="weekSummary">尚無資料</strong>
           </div>
         </article>
@@ -243,11 +276,11 @@
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
     <dialog id="breakDialog" class="break-dialog">
-      <h2>該休息了</h2>
+      <h2 data-i18n="breakDialogTitle">該休息了</h2>
       <p id="breakDialogText">站起來、喝水、看遠方，讓下一段專注更乾淨。</p>
       <div class="button-row">
-        <button id="startBreak" type="button">開始休息</button>
-        <button id="skipBreak" class="secondary-button" type="button">略過這次</button>
+        <button id="startBreak" type="button" data-i18n="startBreak">開始休息</button>
+        <button id="skipBreak" class="secondary-button" type="button" data-i18n="skipBreak">略過這次</button>
       </div>
     </dialog>
 
