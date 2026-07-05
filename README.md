@@ -21,7 +21,7 @@
 - 每日回顧欄位：完成、浪費、明天防線、給自己的話。
 - 休息提醒：可設定專注分鐘與休息分鐘，支援瀏覽器通知。
 - 匯出 JSON、匯出 CSV、匯入 JSON。
-- 支援 GitHub Pages 部署 workflow。
+- 支援 GitHub Pages 與 Cloudflare Pages 部署。
 
 ## 本機使用
 
@@ -38,6 +38,25 @@ python -m http.server 8000
 ```text
 http://localhost:8000
 ```
+
+## Cloudflare Pages 部署
+
+這個專案可以直接放到 Cloudflare Pages。建議使用 GitHub 自動部署，不要使用手動上傳。
+
+詳細設定請看 [`CLOUDFLARE_PAGES.md`](CLOUDFLARE_PAGES.md)。
+
+簡要設定：
+
+| 欄位 | 要填什麼 |
+|---|---|
+| GitHub repo | `TechTWC/life` |
+| Production branch | `main` |
+| Framework preset | `None` / 無框架 |
+| Build command | `exit 0` |
+| Build output directory | `/` |
+| Root directory | 留空 |
+| Environment variables | 不需要 |
+| D1 database binding | 不需要 |
 
 ## GitHub Pages 部署
 
