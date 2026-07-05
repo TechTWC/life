@@ -1,0 +1,9 @@
+{
+  "name": "Life Ledger",
+  "short_name": "Life Ledger",
+  "description": "記錄每天做了哪些事、怎麼花時間，管理生活與生產力。",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#f6f7fb",
+  "theme_color": "#101828"
+}
