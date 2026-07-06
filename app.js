@@ -95,18 +95,28 @@ const I18N = {
     skipBreakToast: "已略過休息，下一段專注開始。",
     gridEyebrow: "24H GRID",
     gridTitle: "24 小時 × 每 30 分鐘補記",
-    gridHelp: "把一天切成 48 格，像填表格一樣補上做了什麼。按下儲存後，系統會把連續相同內容自動合併成時間紀錄。",
-    gridDefaultCategory: "格子預設分類",
-    gridDefaultValue: "格子預設時間價值",
+    gridHelp: "時間從上到下排列。像 Excel 一樣用滑鼠或手指框選一段時段，再填活動名稱、分類、時間價值並套用。",
+    gridSelectedLabel: "已選取時段",
+    gridSelectionNone: "尚未選取",
+    gridSelectionText: "{start}–{end}，共 {count} 格",
+    gridActivityPlaceholder: "例如：寫產品規格、運動、滑手機",
+    gridTimeColumn: "時間",
+    gridActivityColumn: "活動內容",
+    applyGridSelection: "套用到選取時段",
+    clearGridSelection: "清除選取時段內容",
     fillGridFromEntries: "用既有時間線填入空白",
-    saveTimeGrid: "儲存格子成紀錄",
-    clearTimeGrid: "清空格子",
+    saveTimeGrid: "重新整理格子紀錄",
+    clearTimeGrid: "清空全部格子",
     gridHint: "提示：格子只會覆蓋「由格子建立」的紀錄，不會刪除你用計時器或手動表單建立的紀錄。",
-    gridCellPlaceholder: "做了什麼",
-    gridAriaLabel: "{time} 到 {end} 做了什麼",
-    gridSavedToast: "已把 {count} 格轉成 {entries} 筆時間紀錄。",
+    gridEmptyCell: "空白",
+    gridCellAria: "{start} 到 {end}",
+    gridNoSelectionToast: "請先框選一段時段。",
+    gridNoTitleToast: "請先輸入活動名稱。",
+    gridAppliedToast: "已套用到 {count} 格，並更新時間線。",
+    gridSelectionClearedToast: "已清除選取時段內容。",
+    gridSavedToast: "已重新整理格子紀錄，共 {entries} 筆。",
     gridEmptyToast: "格子是空的，已移除由格子建立的紀錄。",
-    gridClearedToast: "已清空格子與由格子建立的紀錄。",
+    gridClearedToast: "已清空全部格子與由格子建立的紀錄。",
     gridClearConfirm: "確定清空這一天的 24 小時格子嗎？由格子建立的紀錄也會移除，但手動與計時器紀錄會保留。",
     gridFilledToast: "已從既有時間線填入 {count} 個空白格。",
     gridNoEntriesToast: "沒有可填入格子的既有時間線紀錄。",
@@ -234,18 +244,28 @@ const I18N = {
     skipBreakToast: "Break skipped. Next focus block started.",
     gridEyebrow: "24H GRID",
     gridTitle: "24 hours × 30-minute fill-in grid",
-    gridHelp: "Split the day into 48 cells and fill in what you did like a spreadsheet. When saved, adjacent cells with the same text are merged into time records.",
-    gridDefaultCategory: "Default category",
-    gridDefaultValue: "Default time value",
+    gridHelp: "Time runs from top to bottom. Select a time range like Excel, then fill activity name, category, and time value.",
+    gridSelectedLabel: "Selected time range",
+    gridSelectionNone: "Nothing selected",
+    gridSelectionText: "{start}–{end}, {count} cells",
+    gridActivityPlaceholder: "Example: write product spec, workout, scroll phone",
+    gridTimeColumn: "Time",
+    gridActivityColumn: "Activity",
+    applyGridSelection: "Apply to selected range",
+    clearGridSelection: "Clear selected range",
     fillGridFromEntries: "Fill blanks from timeline",
-    saveTimeGrid: "Save grid as records",
-    clearTimeGrid: "Clear grid",
+    saveTimeGrid: "Refresh grid records",
+    clearTimeGrid: "Clear all grid cells",
     gridHint: "Tip: the grid only overwrites records created by the grid. Timer and manual records are not deleted.",
-    gridCellPlaceholder: "What did you do?",
-    gridAriaLabel: "What did you do from {time} to {end}?",
-    gridSavedToast: "Saved {count} cells into {entries} time records.",
+    gridEmptyCell: "Blank",
+    gridCellAria: "{start} to {end}",
+    gridNoSelectionToast: "Select a time range first.",
+    gridNoTitleToast: "Enter an activity name first.",
+    gridAppliedToast: "Applied to {count} cells and updated the timeline.",
+    gridSelectionClearedToast: "Selected range cleared.",
+    gridSavedToast: "Grid records refreshed: {entries} records.",
     gridEmptyToast: "The grid is empty. Grid-created records were removed.",
-    gridClearedToast: "Grid and grid-created records cleared.",
+    gridClearedToast: "All grid cells and grid-created records cleared.",
     gridClearConfirm: "Clear this day’s 24-hour grid? Records created by the grid will be removed, but manual and timer records will stay.",
     gridFilledToast: "Filled {count} blank cells from existing timeline records.",
     gridNoEntriesToast: "No existing timeline records can be used to fill the grid.",
@@ -344,8 +364,12 @@ const els = {
   togglePace: document.querySelector("#togglePace"),
   notifyPermission: document.querySelector("#notifyPermission"),
   timeGrid: document.querySelector("#timeGrid"),
+  gridSelectionText: document.querySelector("#gridSelectionText"),
+  gridActivityTitle: document.querySelector("#gridActivityTitle"),
   gridCategory: document.querySelector("#gridCategory"),
   gridValue: document.querySelector("#gridValue"),
+  applyGridSelection: document.querySelector("#applyGridSelection"),
+  clearGridSelection: document.querySelector("#clearGridSelection"),
   fillGridFromEntries: document.querySelector("#fillGridFromEntries"),
   saveTimeGrid: document.querySelector("#saveTimeGrid"),
   clearTimeGrid: document.querySelector("#clearTimeGrid"),
@@ -379,6 +403,7 @@ let state = loadState();
 let selectedDate = todayKey();
 let tickingHandle = null;
 let toastHandle = null;
+let gridSelection = { start: null, end: null, dragging: false };
 
 init();
 
@@ -388,6 +413,7 @@ function init() {
   els.languageSelect.value = getLanguage();
   els.focusMinutes.value = state.settings.focusMinutes;
   els.breakMinutes.value = state.settings.breakMinutes;
+  els.gridValue.value = "maintenance";
   setDefaultEntryTimes();
   applyLanguage();
   bindEvents();
@@ -399,8 +425,7 @@ function loadState() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return structuredCloneSafe(DEFAULT_STATE);
-    const parsed = JSON.parse(raw);
-    return normalizeState(parsed);
+    return normalizeState(JSON.parse(raw));
   } catch (error) {
     console.error("Unable to load Life Ledger state", error);
     return structuredCloneSafe(DEFAULT_STATE);
@@ -423,16 +448,60 @@ function normalizeState(raw) {
 }
 
 function normalizeDay(day) {
+  const grid = {};
+  if (day?.grid && typeof day.grid === "object") {
+    Object.entries(day.grid).forEach(([slot, cell]) => {
+      const normalized = normalizeGridCell(cell);
+      if (normalized) grid[slot] = normalized;
+    });
+  }
+
   return {
     intention: typeof day?.intention === "string" ? day.intention : "",
-    entries: Array.isArray(day?.entries) ? day.entries : [],
-    grid: day?.grid && typeof day.grid === "object" ? day.grid : {},
+    entries: Array.isArray(day?.entries) ? day.entries.map(normalizeEntry).filter(Boolean) : [],
+    grid,
     review: {
       wins: typeof day?.review?.wins === "string" ? day.review.wins : "",
       leaks: typeof day?.review?.leaks === "string" ? day.review.leaks : "",
       tomorrow: typeof day?.review?.tomorrow === "string" ? day.review.tomorrow : "",
       note: typeof day?.review?.note === "string" ? day.review.note : "",
     },
+  };
+}
+
+function normalizeEntry(entry) {
+  if (!entry || typeof entry !== "object") return null;
+  const title = cleanText(entry.title);
+  if (!title) return null;
+  const start = typeof entry.start === "string" ? entry.start : "00:00";
+  const end = typeof entry.end === "string" ? entry.end : "00:30";
+  return {
+    id: entry.id || createId(),
+    title,
+    category: isCategory(entry.category) ? entry.category : "other",
+    value: isValue(entry.value) ? entry.value : "maintenance",
+    start,
+    end,
+    minutes: Number(entry.minutes) || Math.max(TIME_SLOT_MINUTES, minutesBetween(start, end)),
+    note: typeof entry.note === "string" ? entry.note : "",
+    source: entry.source || "manual",
+    createdAt: entry.createdAt || new Date().toISOString(),
+  };
+}
+
+function normalizeGridCell(cell) {
+  if (typeof cell === "string") {
+    const title = cleanText(cell);
+    if (!title) return null;
+    return { title, category: "other", value: "maintenance" };
+  }
+  if (!cell || typeof cell !== "object") return null;
+  const title = cleanText(cell.title);
+  if (!title) return null;
+  return {
+    title,
+    category: isCategory(cell.category) ? cell.category : "other",
+    value: isValue(cell.value) ? cell.value : "maintenance",
   };
 }
 
@@ -446,17 +515,15 @@ function saveState() {
 }
 
 function getDay(dateKey = selectedDate) {
-  if (!state.days[dateKey]) {
-    state.days[dateKey] = normalizeDay({});
-  } else {
-    state.days[dateKey] = normalizeDay(state.days[dateKey]);
-  }
+  if (!state.days[dateKey]) state.days[dateKey] = normalizeDay({});
+  else state.days[dateKey] = normalizeDay(state.days[dateKey]);
   return state.days[dateKey];
 }
 
 function bindEvents() {
   els.currentDate.addEventListener("change", () => {
     selectedDate = els.currentDate.value || todayKey();
+    gridSelection = { start: null, end: null, dragging: false };
     render();
   });
 
@@ -484,9 +551,17 @@ function bindEvents() {
   els.startBreak.addEventListener("click", startBreakFromDialog);
   els.skipBreak.addEventListener("click", skipBreak);
 
-  els.saveTimeGrid.addEventListener("click", saveTimeGrid);
+  els.applyGridSelection.addEventListener("click", applyGridSelection);
+  els.clearGridSelection.addEventListener("click", clearGridSelectionContent);
+  els.saveTimeGrid.addEventListener("click", refreshGridRecords);
   els.clearTimeGrid.addEventListener("click", clearTimeGrid);
   els.fillGridFromEntries.addEventListener("click", fillGridFromExistingEntries);
+
+  els.timeGrid.addEventListener("pointerdown", handleGridPointerDown);
+  els.timeGrid.addEventListener("pointerover", handleGridPointerOver);
+  window.addEventListener("pointerup", () => {
+    gridSelection.dragging = false;
+  });
 
   els.entryForm.addEventListener("submit", addManualEntry);
   els.sortEntries.addEventListener("click", sortEntries);
@@ -551,22 +626,19 @@ function toggleTheme() {
 }
 
 function populateCategorySelects() {
-  const selects = [els.timerCategory, els.entryCategory, els.gridCategory];
-  selects.forEach((select) => {
+  [els.timerCategory, els.entryCategory, els.gridCategory].forEach((select) => {
     const previous = select.value || "other";
     select.innerHTML = CATEGORY_OPTIONS.map((category) => `<option value="${category.id}">${escapeHtml(getCategoryLabel(category.id))}</option>`).join("");
-    select.value = CATEGORY_OPTIONS.some((category) => category.id === previous) ? previous : "other";
+    select.value = isCategory(previous) ? previous : "other";
   });
 }
 
 function populateValueSelects() {
-  const selects = [els.timerValue, els.entryValue, els.gridValue];
-  selects.forEach((select) => {
-    const previous = select.value || "investment";
+  [els.timerValue, els.entryValue, els.gridValue].forEach((select) => {
+    const previous = select.value || "maintenance";
     select.innerHTML = VALUE_OPTIONS.map((value) => `<option value="${value.id}">${escapeHtml(getValueLabel(value.id))}</option>`).join("");
-    select.value = VALUE_OPTIONS.some((value) => value.id === previous) ? previous : "investment";
+    select.value = isValue(previous) ? previous : "maintenance";
   });
-  if (!els.gridValue.value) els.gridValue.value = "maintenance";
 }
 
 function setDefaultEntryTimes() {
@@ -697,6 +769,7 @@ function clearSelectedDay() {
   const confirmed = window.confirm(t("clearDayConfirm", { date: selectedDate }));
   if (!confirmed) return;
   delete state.days[selectedDate];
+  gridSelection = { start: null, end: null, dragging: false };
   saveState();
   render();
   showToast(t("clearDayToast"));
@@ -892,49 +965,145 @@ function renderPace() {
   els.nextBreakText.textContent = `${action}：${t("after", { time: formatSecondsShort(seconds) })}`;
 }
 
+function handleGridPointerDown(event) {
+  const button = event.target.closest("[data-grid-index]");
+  if (!button) return;
+  event.preventDefault();
+  const index = Number(button.dataset.gridIndex);
+  gridSelection = { start: index, end: index, dragging: true };
+  syncGridFormFromSelection();
+  renderTimeGrid();
+}
+
+function handleGridPointerOver(event) {
+  if (!gridSelection.dragging) return;
+  const button = event.target.closest("[data-grid-index]");
+  if (!button) return;
+  const index = Number(button.dataset.gridIndex);
+  if (index === gridSelection.end) return;
+  gridSelection.end = index;
+  renderTimeGrid();
+}
+
+function getSelectedGridIndices() {
+  if (!Number.isInteger(gridSelection.start) || !Number.isInteger(gridSelection.end)) return [];
+  const start = Math.min(gridSelection.start, gridSelection.end);
+  const end = Math.max(gridSelection.start, gridSelection.end);
+  return Array.from({ length: end - start + 1 }, (_, offset) => start + offset);
+}
+
+function syncGridFormFromSelection() {
+  const indices = getSelectedGridIndices();
+  if (!indices.length) return;
+  const firstSlot = slotIndexToTime(indices[0]);
+  const cell = normalizeGridCell(getDay().grid[firstSlot]);
+  if (!cell) return;
+  els.gridActivityTitle.value = cell.title;
+  els.gridCategory.value = cell.category;
+  els.gridValue.value = cell.value;
+}
+
+function updateGridSelectionText() {
+  const indices = getSelectedGridIndices();
+  if (!indices.length) {
+    els.gridSelectionText.textContent = t("gridSelectionNone");
+    return;
+  }
+  const start = slotIndexToTime(indices[0]);
+  const end = slotIndexToTime(indices[indices.length - 1] + 1);
+  els.gridSelectionText.textContent = t("gridSelectionText", { start, end, count: indices.length });
+}
+
 function renderTimeGrid() {
   const day = getDay();
-  const grid = day.grid || {};
+  const selected = new Set(getSelectedGridIndices());
   const html = createTimeSlots().map((slot) => {
     const end = slotIndexToTime(slot.index + 1);
-    const value = grid[slot.time] || "";
+    const cell = normalizeGridCell(day.grid[slot.time]);
+    const isSelected = selected.has(slot.index);
+    const title = cell ? cell.title : t("gridEmptyCell");
+    const meta = cell ? `${getCategoryLabel(cell.category)} · ${getValueLabel(cell.value)}` : t("gridCellAria", { start: slot.time, end });
+    const className = [
+      "grid-cell-button",
+      cell ? "filled" : "empty",
+      isSelected ? "selected" : "",
+    ].filter(Boolean).join(" ");
+
     return `
-      <label class="grid-cell" title="${escapeHtml(slot.time)} – ${escapeHtml(end)}">
-        <span>${escapeHtml(slot.time)}</span>
-        <input type="text" data-grid-slot="${escapeHtml(slot.time)}" value="${escapeHtml(value)}" placeholder="${escapeHtml(t("gridCellPlaceholder"))}" aria-label="${escapeHtml(t("gridAriaLabel", { time: slot.time, end }))}" autocomplete="off" />
-      </label>
+      <div class="time-row">
+        <div class="time-label">
+          <span>${escapeHtml(slot.time)}</span>
+          <small>${escapeHtml(end)}</small>
+        </div>
+        <button type="button" class="${className}" data-grid-index="${slot.index}" aria-label="${escapeHtml(t("gridCellAria", { start: slot.time, end }))}">
+          <strong>${escapeHtml(title)}</strong>
+          <small>${escapeHtml(meta)}</small>
+        </button>
+      </div>
     `;
   }).join("");
+
   els.timeGrid.innerHTML = html;
+  updateGridSelectionText();
 }
 
-function readGridInputs() {
-  const grid = {};
-  els.timeGrid.querySelectorAll("input[data-grid-slot]").forEach((input) => {
-    const title = cleanText(input.value);
-    if (title) grid[input.dataset.gridSlot] = title;
-  });
-  return grid;
-}
+function applyGridSelection() {
+  const indices = getSelectedGridIndices();
+  if (!indices.length) {
+    showToast(t("gridNoSelectionToast"));
+    return;
+  }
 
-function saveTimeGrid() {
+  const title = cleanText(els.gridActivityTitle.value);
+  if (!title) {
+    showToast(t("gridNoTitleToast"));
+    return;
+  }
+
   const day = getDay();
-  const grid = readGridInputs();
-  day.grid = grid;
-  day.entries = day.entries.filter((entry) => entry.source !== "time-grid");
+  indices.forEach((index) => {
+    day.grid[slotIndexToTime(index)] = {
+      title,
+      category: els.gridCategory.value,
+      value: els.gridValue.value,
+    };
+  });
 
-  const gridEntries = buildEntriesFromGrid(grid, els.gridCategory.value, els.gridValue.value);
-  day.entries.push(...gridEntries);
-  day.entries.sort(compareEntriesByTime);
+  replaceGridEntries(day);
+  saveState();
+  render();
+  showToast(t("gridAppliedToast", { count: indices.length }));
+}
+
+function clearGridSelectionContent() {
+  const indices = getSelectedGridIndices();
+  if (!indices.length) {
+    showToast(t("gridNoSelectionToast"));
+    return;
+  }
+
+  const day = getDay();
+  indices.forEach((index) => {
+    delete day.grid[slotIndexToTime(index)];
+  });
+
+  replaceGridEntries(day);
+  saveState();
+  render();
+  showToast(t("gridSelectionClearedToast"));
+}
+
+function refreshGridRecords() {
+  const day = getDay();
+  const entries = replaceGridEntries(day);
   saveState();
   render();
 
-  const filledCells = Object.keys(grid).length;
-  if (!filledCells) {
+  if (!Object.keys(day.grid).length) {
     showToast(t("gridEmptyToast"));
     return;
   }
-  showToast(t("gridSavedToast", { count: filledCells, entries: gridEntries.length }));
+  showToast(t("gridSavedToast", { entries: entries.length }));
 }
 
 function clearTimeGrid() {
@@ -943,6 +1112,7 @@ function clearTimeGrid() {
   const day = getDay();
   day.grid = {};
   day.entries = day.entries.filter((entry) => entry.source !== "time-grid");
+  gridSelection = { start: null, end: null, dragging: false };
   saveState();
   render();
   showToast(t("gridClearedToast"));
@@ -956,52 +1126,63 @@ function fillGridFromExistingEntries() {
     return;
   }
 
-  const grid = { ...(day.grid || {}) };
   let filled = 0;
   entries.forEach((entry) => {
     const startIndex = clamp(Math.floor(timeToMinutes(entry.start) / TIME_SLOT_MINUTES), 0, 47);
-    const endIndex = clamp(Math.ceil(timeToMinutes(entry.end) / TIME_SLOT_MINUTES), startIndex + 1, 48);
+    const rawEnd = timeToMinutes(entry.end);
+    const endIndex = clamp(Math.ceil(rawEnd / TIME_SLOT_MINUTES), startIndex + 1, 48);
     for (let index = startIndex; index < endIndex; index += 1) {
       const slot = slotIndexToTime(index);
-      if (!grid[slot]) {
-        grid[slot] = entry.title;
+      if (!normalizeGridCell(day.grid[slot])) {
+        day.grid[slot] = {
+          title: entry.title,
+          category: entry.category,
+          value: entry.value,
+        };
         filled += 1;
       }
     }
   });
 
-  day.grid = grid;
+  replaceGridEntries(day);
   saveState();
-  renderTimeGrid();
+  render();
   showToast(t("gridFilledToast", { count: filled }));
 }
 
-function buildEntriesFromGrid(grid, category, value) {
-  const slots = createTimeSlots();
+function replaceGridEntries(day) {
+  day.entries = day.entries.filter((entry) => entry.source !== "time-grid");
+  const entries = buildEntriesFromGrid(day.grid);
+  day.entries.push(...entries);
+  day.entries.sort(compareEntriesByTime);
+  return entries;
+}
+
+function buildEntriesFromGrid(grid) {
   const entries = [];
   let current = null;
 
-  slots.forEach((slot) => {
-    const title = cleanText(grid[slot.time]);
-    if (!title) {
+  createTimeSlots().forEach((slot) => {
+    const cell = normalizeGridCell(grid[slot.time]);
+    if (!cell) {
       flushCurrent();
       return;
     }
 
-    if (current && current.title === title) {
+    if (current && current.title === cell.title && current.category === cell.category && current.value === cell.value) {
       current.endIndex = slot.index + 1;
       return;
     }
 
     flushCurrent();
     current = {
-      title,
+      ...cell,
       startIndex: slot.index,
       endIndex: slot.index + 1,
     };
   });
-  flushCurrent();
 
+  flushCurrent();
   return entries;
 
   function flushCurrent() {
@@ -1010,8 +1191,8 @@ function buildEntriesFromGrid(grid, category, value) {
     entries.push({
       id: createId(),
       title: current.title,
-      category,
-      value,
+      category: current.category,
+      value: current.value,
       start: slotIndexToTime(current.startIndex),
       end: slotIndexToTime(current.endIndex),
       minutes,
@@ -1172,6 +1353,7 @@ function importJson(event) {
       state = importedState;
       saveState();
       selectedDate = todayKey();
+      gridSelection = { start: null, end: null, dragging: false };
       els.currentDate.value = selectedDate;
       applyLanguage();
       render();
@@ -1314,6 +1496,14 @@ function getValueLabel(valueId) {
   return value[getLanguage()] || value.zh;
 }
 
+function isCategory(categoryId) {
+  return CATEGORY_OPTIONS.some((category) => category.id === categoryId);
+}
+
+function isValue(valueId) {
+  return VALUE_OPTIONS.some((value) => value.id === valueId);
+}
+
 function sum(values) {
   return values.reduce((total, value) => total + (Number(value) || 0), 0);
 }
@@ -1324,7 +1514,7 @@ function clamp(value, min, max) {
 
 function csvEscape(value) {
   const text = String(value ?? "");
-  if (!/[",\n]/.test(text)) return text;
+  if (!/["]|,|\n/.test(text)) return text;
   return `"${text.replaceAll('"', '""')}"`;
 }
 
