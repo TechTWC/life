@@ -137,26 +137,44 @@
             <h2 data-i18n="gridTitle">24 小時 × 每 30 分鐘補記</h2>
           </div>
         </div>
-        <p class="muted" data-i18n="gridHelp">把一天切成 48 格，像填表格一樣補上做了什麼。按下儲存後，系統會把連續相同內容自動合併成時間紀錄。</p>
-        <div class="grid-toolbar">
-          <label>
-            <span data-i18n="gridDefaultCategory">格子預設分類</span>
-            <select id="gridCategory"></select>
-          </label>
-          <label>
-            <span data-i18n="gridDefaultValue">格子預設時間價值</span>
-            <select id="gridValue"></select>
-          </label>
-          <div class="button-row compact grid-actions">
-            <button id="fillGridFromEntries" class="secondary-button" type="button" data-i18n="fillGridFromEntries">用既有時間線填入空白</button>
-            <button id="saveTimeGrid" type="button" data-i18n="saveTimeGrid">儲存格子成紀錄</button>
-            <button id="clearTimeGrid" class="danger-button" type="button" data-i18n="clearTimeGrid">清空格子</button>
+        <p class="muted" data-i18n="gridHelp">時間從上到下排列。像 Excel 一樣用滑鼠或手指框選一段時段，再填活動名稱、分類、時間價值並套用。</p>
+
+        <div class="grid-planner">
+          <aside class="grid-fill-panel">
+            <div class="selection-box">
+              <span data-i18n="gridSelectedLabel">已選取時段</span>
+              <strong id="gridSelectionText">尚未選取</strong>
+            </div>
+            <label>
+              <span data-i18n="activityNameLabel">活動名稱</span>
+              <input id="gridActivityTitle" type="text" data-i18n-placeholder="gridActivityPlaceholder" placeholder="例如：寫產品規格、運動、滑手機" autocomplete="off" />
+            </label>
+            <label>
+              <span data-i18n="categoryLabel">分類</span>
+              <select id="gridCategory"></select>
+            </label>
+            <label>
+              <span data-i18n="valueLabel">時間價值</span>
+              <select id="gridValue"></select>
+            </label>
+            <div class="button-grid">
+              <button id="applyGridSelection" type="button" data-i18n="applyGridSelection">套用到選取時段</button>
+              <button id="clearGridSelection" class="secondary-button" type="button" data-i18n="clearGridSelection">清除選取時段內容</button>
+              <button id="fillGridFromEntries" class="secondary-button" type="button" data-i18n="fillGridFromEntries">用既有時間線填入空白</button>
+              <button id="saveTimeGrid" class="secondary-button" type="button" data-i18n="saveTimeGrid">重新整理格子紀錄</button>
+              <button id="clearTimeGrid" class="danger-button" type="button" data-i18n="clearTimeGrid">清空全部格子</button>
+            </div>
+          </aside>
+
+          <div class="time-grid-wrap">
+            <div class="grid-table-head">
+              <span data-i18n="gridTimeColumn">時間</span>
+              <span data-i18n="gridActivityColumn">活動內容</span>
+            </div>
+            <div id="timeGrid" class="time-grid" aria-label="24 hour half-hour grid"></div>
           </div>
         </div>
         <div class="time-grid-hint" data-i18n="gridHint">提示：格子只會覆蓋「由格子建立」的紀錄，不會刪除你用計時器或手動表單建立的紀錄。</div>
-        <div class="time-grid-wrap">
-          <div id="timeGrid" class="time-grid" aria-label="24 hour half-hour grid"></div>
-        </div>
       </section>
 
       <section class="workbench-grid wide-left">
